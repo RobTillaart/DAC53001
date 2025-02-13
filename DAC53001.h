@@ -41,7 +41,7 @@ class DAC53001
   bool      begin();
   bool      isConnected();
   uint8_t   getAddress();     //  convenience.
-  uint8_t   getMaxValue();    //  1023 (10 bit) or 
+  uint16_t  getMaxValue();    //  1023 (10 bit) or 
   uint8_t   getChannels();    //
 
 
@@ -117,7 +117,7 @@ class DAC53001
 protected:
 
   uint8_t   _channels;
-  uint8_t   _maxValue;
+  uint16_t  _maxValue;
   uint16_t  _error;
 
   uint32_t  _lastWrite;

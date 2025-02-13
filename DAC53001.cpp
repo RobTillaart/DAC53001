@@ -71,7 +71,7 @@ uint8_t DAC53001::getAddress()
   return _address;
 }
 
-uint8_t DAC53001::getMaxValue()
+uint16_t DAC53001::getMaxValue()
 {
   return _maxValue;
 }

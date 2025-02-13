@@ -96,7 +96,7 @@ too if they are behind the multiplexer.
 - **bool begin()** checks if address can be found on the I2C bus.
 - **bool isConnected()** checks if address can be found on the I2C bus.
 - **uint8_t getAddress()** returns address set.
-- **uint8_t getMaxValue()** returns 1023 (10 bit) or 4095 (12 bit)
+- **uint16_t getMaxValue()** returns 1023 (10 bit) or 4095 (12 bit)
 - **uint8_t getChannels()** returns 1 or 2
 
 
