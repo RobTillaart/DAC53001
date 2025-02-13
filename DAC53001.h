@@ -48,6 +48,7 @@ class DAC53001
   //  DAC-X-VOUT-CMP-CONFIG  page 58
   //  VOLTAGE REFERENCE
   void      setReference(DACX300X_reference mode, uint8_t channel = 0);
+  uint8_t   getReference(uint8_t channel = 0);
 
 
   //  DAC-X-IOUT-MISC-CONFIG page 59
@@ -94,6 +95,7 @@ class DAC53001
 
   //  SETDAC page 62
   uint16_t setDAC(uint16_t value, uint8_t channel = 0);
+  uint16_t getDAC(uint8_t channel = 0);
 
 
   ////////////////////////////////////////////////////////

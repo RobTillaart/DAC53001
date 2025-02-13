@@ -170,6 +170,7 @@ See datasheet page 62.
 See datasheet page 62.
 
 - **uint16_t setDAC(uint16_t value, uint8_t channel = 0)**
+- **uint16_t getDAC(uint8_t channel = 0)**
 
 
 ### General status

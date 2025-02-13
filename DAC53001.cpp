@@ -116,6 +116,18 @@ void DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
   _write16(reg, mask);
 }
 
+uint8_t DAC53001::getReference(uint8_t channel)
+{
+  if (channel >= _channels) return 0;
+  //  COMMON-CONFIG page 62 for internal ref bit 12
+  uint8_t reg = DAC53001_DAC_0_VOUT_CMP_CONFIG;
+  if (channel == 1) reg = DAC53001_DAC_1_VOUT_CMP_CONFIG;
+  uint16_t mode = _read16(reg);
+  mode >>= 10;
+  mode &= 0x0007;
+  return mode;
+}
+
 
 ////////////////////////////////////////////////////////
 //
@@ -190,7 +202,7 @@ uint16_t DAC53001::getStatus()
 {
   return _read16(DAC53001_GENERAL_STATUS);
 }
-  
+
 uint16_t DAC53001::getDeviceID()
 {
   uint16_t deviceId = _read16(DAC53001_GENERAL_STATUS);
@@ -215,6 +227,14 @@ uint16_t DAC53001::setDAC(uint16_t value, uint8_t channel)
   uint8_t reg = DAC53001_DAC_0_DATA;
   if (channel == 1) reg = DAC53001_DAC_1_DATA;
   return _write16(reg, value << 4);  //  bit 4-15
+}
+
+uint16_t DAC53001::getDAC(uint8_t channel)
+{
+  if (channel >= _channels) return 0;
+  uint8_t reg = DAC53001_DAC_0_DATA;
+  if (channel == 1) reg = DAC53001_DAC_1_DATA;
+  return _read16(reg) >> 4;  //  bit 4-15
 }
 
 uint16_t DAC53001::lastError()
