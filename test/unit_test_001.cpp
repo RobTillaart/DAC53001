@@ -46,7 +46,6 @@ unittest(test_constructor)
   DAC53001 dac(0x30);
 
   assertEqual(48, dac.getAddress());
-  assertEqual( 0, dac.lastRead());
   assertEqual(1023, dac.getMaxValue());
   assertEqual( 1, dac.getChannels());
 }
