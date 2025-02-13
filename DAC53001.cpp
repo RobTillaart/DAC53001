@@ -131,7 +131,7 @@ void DAC53001::setCurrentRange(uint8_t range, uint8_t channel)
   _write16(reg, mask);
 }
 
-uint8_t DAC53001::getCurrentRange(uint8_t channel = 0)
+uint8_t DAC53001::getCurrentRange(uint8_t channel)
 {
   if (channel >= _channels) return 0;
   uint8_t reg = DAC53001_DAC_0_IOUT_MISC_CONFIG;
