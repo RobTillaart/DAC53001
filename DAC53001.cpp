@@ -161,6 +161,19 @@ uint16_t DAC53001::getStatus()
   return _read16(DAC53001_GENERAL_STATUS);
 }
 
+uint16_t DAC53001::getDeviceID()
+{
+  uint16_t deviceId = _read16(DAC53001_GENERAL_STATUS);
+  // translate 08 = 63002, 09 = 63001, 10 = 53002, 11 = 53001  ?
+  return (deviceId & 0x000F) >> 2;
+}
+
+uint16_t DAC53001::getVersionID()
+{
+  uint16_t versionId = _read16(DAC53001_GENERAL_STATUS);
+  return versionId & 0x03;
+}
+
 
 ////////////////////////////////////////////////
 //
@@ -236,21 +249,21 @@ uint16_t DAC53001::_write16(uint8_t reg, uint16_t value)
 //
 //  TODO - DAC53002 - DAC63001 - DAC63002 ??
 DAC53002::DAC53002(const uint8_t address, TwoWire * wire)
-        : DAC53001(adress, wire)
+        : DAC53001(address, wire)
 {
   _channels = 2;
   _maxValue = 1023;
 }
 
 DAC63001::DAC63001(const uint8_t address, TwoWire * wire)
-        : DAC53001(adress, wire)
+        : DAC53001(address, wire)
 {
   _channels = 1;
   _maxValue = 4095;
 }
 
 DAC63002::DAC63002(const uint8_t address, TwoWire * wire)
-        : DAC53001(adress, wire)
+        : DAC53001(address, wire)
 {
   _channels = 2;
   _maxValue = 4095;

@@ -41,8 +41,8 @@ class DAC53001
   bool      begin();
   bool      isConnected();
   uint8_t   getAddress();     //  convenience.
-  uint16_t  getMaxValue();    //  1023 (10 bit) or 
-  uint8_t   getChannels();    //
+  uint16_t  getMaxValue();    //  1023 (10 bit) or 4095 (12 bit)
+  uint8_t   getChannels();    //  1 or 2
 
 
   //  DAC-X-VOUT-CMP-CONFIG  page 58
@@ -76,6 +76,8 @@ class DAC53001
 
   //  GENERAL-STATUS page 65
   uint16_t getStatus();
+  uint16_t getDeviceID();
+  uint16_t getVersionID();
 
 
   //  SETDAC
@@ -85,7 +87,7 @@ class DAC53001
   ////////////////////////////////////////////////////////
   //
   //  OTHER - chapter 7 - page 55 and beyond.
-  //  registers not in first release
+  //  registers not in first releases
   //
   //  NOP                     page 57
   //  DAC_X_MARGIN_HIGH       page 57

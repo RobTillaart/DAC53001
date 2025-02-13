@@ -21,7 +21,7 @@ Arduino library for I2C DAC53001 10 bit DAC.
 Function names / API still can change.
 
 
-**Warning:** This library is not tested with hardware yet. 
+**Warning:** This library is not tested with hardware yet.
 So use with care, feedback welcome.
 
 The DAC63001, DAC63002, DAC53001, and DAC53002 are a pin-compatible DACs.
@@ -46,8 +46,8 @@ TODO elaborate
 
 ### Please report your experiences.
 
-If you have a DAC53001 device, please let me know your experiences
-with the sensor and this (or other) library.
+If you have a DAC53001 or compatible device, please let me know
+your experiences with the sensor and this (or other) libraries.
 
 
 ### Related
@@ -60,7 +60,6 @@ with the sensor and this (or other) library.
 - https://github.com/RobTillaart/AD5680  (18 bit DAC)
 
 There are more DAC libraries.
-
 
 
 ## I2C
@@ -84,7 +83,6 @@ Also note that switching between channels will slow down other devices
 too if they are behind the multiplexer.
 
 - https://github.com/RobTillaart/TCA9548
-
 
 
 ## Interface
@@ -138,14 +136,14 @@ See datasheet page 62.
 |  0x04  |  PowerDown + 100 kΩ to AGND  |   power up     |
 |  0x05  |  PowerDown + 100 kΩ to AGND  |   power down   |
 |  0x06  |  PowerDown + Hi-Z to AGND    |   power up     |
-|  0x07  |  PowerDown + Hi-Z to AGND    |   power down   |  default 
+|  0x07  |  PowerDown + Hi-Z to AGND    |   power down   |  default
 
 
 ### setDAC
 
 See datasheet page 62.
 
-- **uint16_t setDAC(uint16_t value, uint8_t channel = 0)** 
+- **uint16_t setDAC(uint16_t value, uint8_t channel = 0)**
 
 
 ### General status
@@ -153,8 +151,22 @@ See datasheet page 62.
 See datasheet page 65.
 
 - **uint16_t getStatus()** returns bit mask.
+- **uint16_t getDeviceID()** idem.
+- **uint16_t getVersionID()** return 0x00.
 
-To elaborate meaning bits in table.
+Meaning status bits:
+
+|  bits   |  name               |  meaning  |
+|:-------:|:--------------------|:----------|
+|   15    |  NVM-CRC-FAIL-INT   |  0 = OK, 1 = reboot (datasheet)
+|   14    |  NVM-CRC-FAIL-USER  |  0 = OK, 1 = rewrite NVM (datasheet)
+|   13    |  x                  |  don't care
+|   12    |  DAC-0-BUSY         |  0 = IDLE, 1 = BUSY
+|  10-11  |  x                  |  don't care
+|    9    |  DAC-1-BUSY         |  0 = IDLE, 1 = BUSY
+|    8    |  x                  |  don't care
+|   2-7   |  DEVICE-ID          |  08 = 63002, 09 = 63001, 10 = 53002, 11 = 53001
+|   0-1   |  VERSION-ID         |  00 (datasheet).
 
 
 ### Error handling
@@ -162,7 +174,6 @@ To elaborate meaning bits in table.
 - **uint16_t lastError()** returns last error and resets to OK.
 
 To add table of error codes.
-
 
 
 ## Future
@@ -174,14 +185,16 @@ To add table of error codes.
 
 #### Should
 
-- replace magic numbers by defines (const int);
 
 #### Could
 
+- replace magic numbers by defines (const int);
+- enum for OUTPUTMODE? => difficult names
 - add examples
 - add more error handling
   - channel > # channels
   - incorrect mode
+- isBusy(channel)?
 
 #### Wont
 
