@@ -43,11 +43,26 @@ unittest_teardown()
 
 unittest(test_constructor)
 {
-  DAC53001 dac(0x30);
+  DAC53001 dac0(0x30);
+  DAC53002 dac1(0x31);
+  DAC63001 dac2(0x32);
+  DAC63002 dac3(0x33);
 
-  assertEqual(48, dac.getAddress());
-  assertEqual(1023, dac.getMaxValue());
-  assertEqual( 1, dac.getChannels());
+  assertEqual(48,   dac0.getAddress());
+  assertEqual(1023, dac0.getMaxValue());
+  assertEqual( 1,   dac0.getChannels());
+
+  assertEqual(49,   dac1.getAddress());
+  assertEqual(1023, dac1.getMaxValue());
+  assertEqual( 1,   dac1.getChannels());
+
+  assertEqual(50,   dac2.getAddress());
+  assertEqual(4095, dac2.getMaxValue());
+  assertEqual( 1,   dac2.getChannels());
+
+  assertEqual(51,   dac3.getAddress());
+  assertEqual(4095, dac3.getMaxValue());
+  assertEqual( 2,   dac3.getChannels());
 }
 
 

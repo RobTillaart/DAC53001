@@ -234,12 +234,26 @@ uint16_t DAC53001::_write16(uint8_t reg, uint16_t value)
 //  DERIVED CLASSES
 //
 //  TODO - DAC53002 - DAC63001 - DAC63002 ??
+DAC53002::DAC53002(const uint8_t address, TwoWire * wire)
+        : DAC53001(adress, wire)
+{
+  _channels = 2;
+  _maxValue = 1023;
+}
 
-/*
-DAC53002 - 10 bit 2 channels
-DAC63001 - 12 bit 1 channel
-DAC63002 - 12 bit 2 channels
-*/
+DAC63001::DAC63001(const uint8_t address, TwoWire * wire)
+        : DAC53001(adress, wire)
+{
+  _channels = 1;
+  _maxValue = 4095;
+}
+
+DAC63002::DAC63002(const uint8_t address, TwoWire * wire)
+        : DAC53001(adress, wire)
+{
+  _channels = 2;
+  _maxValue = 4095;
+}
 
 
 //  -- END OF FILE --

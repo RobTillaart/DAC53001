@@ -132,6 +132,27 @@ protected:
 //  DERIVED CLASSES
 //
 //  TODO - DAC53002 - DAC63001 - DAC63002 ??
+class DAC53002 : public DAC53001
+{
+public:
+  DAC53002(const uint8_t address, TwoWire * wire = &Wire);
+};
+
+class DAC63001 : public DAC53001
+{
+public:
+  DAC63001(const uint8_t address, TwoWire * wire = &Wire);
+};
+
+class DAC63002 : public DAC53001
+{
+public:
+  DAC63002(const uint8_t address, TwoWire * wire = &Wire);
+};
+
+
+
+
 
 
 //  -- END OF FILE --
