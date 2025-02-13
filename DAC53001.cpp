@@ -11,6 +11,8 @@
 #include "DAC53001.h"
 
 
+////////////////////////////////////////////////////////
+//
 //  I2C REGISTERS - datasheet Page 55-69
 //  note missing register addresses
 
@@ -45,6 +47,11 @@ const uint8_t DAC53001_SRAM_DATA              = 0x2C;
 const uint8_t DAC53001_BRDCAST_DATA           = 0x50;
 
 
+
+////////////////////////////////////////////////////////
+//
+//  CONSTRUCTOR
+//
 DAC53001::DAC53001(const uint8_t address, TwoWire * wire)
 {
   _address  = address;
@@ -82,7 +89,7 @@ uint8_t DAC53001::getChannels()
 }
 
 
-////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 //
 //  VOLTAGE REFERENCE
 //
@@ -104,14 +111,37 @@ void DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
   reg = DAC53001_DAC_0_VOUT_CMP_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_VOUT_CMP_CONFIG;
   mask = _read16(reg);
-  //  mask &= b1110 0011 1111 1111;
-  mask &= 0xE3FF;
-  mask |= (mode << 10);
+  mask &= 0xE3FF;        //  clear bits
+  mask |= (mode << 10);  //  set mode
   _write16(reg, mask);
 }
 
 
-////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+//
+//  CURRENT RANGE
+//
+void DAC53001::setCurrentRange(uint8_t range, uint8_t channel)
+{
+  if (channel >= _channels) return;
+  if (range > 0x0B) return;
+  uint8_t reg = DAC53001_DAC_0_IOUT_MISC_CONFIG;
+  if (channel == 1) reg = DAC53001_DAC_1_IOUT_MISC_CONFIG;
+  uint16_t mask = range << 9;
+  _write16(reg, mask);
+}
+
+uint8_t DAC53001::getCurrentRange(uint8_t channel = 0)
+{
+  if (channel >= _channels) return 0;
+  uint8_t reg = DAC53001_DAC_0_IOUT_MISC_CONFIG;
+  if (channel == 1) reg = DAC53001_DAC_1_IOUT_MISC_CONFIG;
+  uint16_t mask = _read16(reg);
+  return (mask >> 9) & 0x000F;
+}
+
+
+////////////////////////////////////////////////////////
 //
 //  OUTPUT MODE
 //
@@ -152,7 +182,7 @@ uint8_t DAC53001::getOutputMode(uint8_t channel)
 }
 
 
-////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 //
 //  GENERAL STATUS
 //
@@ -160,7 +190,7 @@ uint16_t DAC53001::getStatus()
 {
   return _read16(DAC53001_GENERAL_STATUS);
 }
-
+  
 uint16_t DAC53001::getDeviceID()
 {
   uint16_t deviceId = _read16(DAC53001_GENERAL_STATUS);
@@ -175,7 +205,7 @@ uint16_t DAC53001::getVersionID()
 }
 
 
-////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 //
 //  SETDAC
 //
@@ -223,7 +253,6 @@ uint16_t DAC53001::_read16(uint8_t reg)
   return value;
 }
 
-
 uint16_t DAC53001::_write16(uint8_t reg, uint16_t value)
 {
   _error = DAC53001_OK;
@@ -243,7 +272,7 @@ uint16_t DAC53001::_write16(uint8_t reg, uint16_t value)
 
 
 
-////////////////////////////////////////
+////////////////////////////////////////////////////////
 //
 //  DERIVED CLASSES
 //

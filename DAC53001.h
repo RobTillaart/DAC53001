@@ -47,18 +47,30 @@ class DAC53001
 
   //  DAC-X-VOUT-CMP-CONFIG  page 58
   //  VOLTAGE REFERENCE
-  void setReference(DACX300X_reference mode, uint8_t channel = 0);
+  void      setReference(DACX300X_reference mode, uint8_t channel = 0);
+
 
   //  DAC-X-IOUT-MISC-CONFIG page 59
-  //  must
+  //  CURRENT RANGE
+  //  00     0 μA  to    25 μA
+  //  01     0 μA  to    50 μA
+  //  02     0 μA  to   125 μA
+  //  03     0 μA  to   250 μA
+  //
+  //  04     0 μA  to   ‒24 μA
+  //  05     0 μA  to   ‒48 μA
+  //  06     0 μA  to  ‒120 μA
+  //  07     0 μA  to  ‒240 μA
+  //
+  //  08    ‒25 μA  to  +25 μA
+  //  09    ‒50 μA  to  +50 μA
+  //  10   ‒125 μA  to +125 μA
+  //  11   ‒250 μA  to +250 μA
+  void      setCurrentRange(uint8_t range, uint8_t channel = 0);
+  uint8_t   getCurrentRange(uint8_t channel = 0);
 
 
-  //  DAC-X-FUNC-CONFIG page 60
-  //  must, direct write - SYNC-CONFIG-X  ????  PowerDown + 100 kΩ to AGND
-  //  ??
-
-
-  //  COMMON-CONFIG Register page 62
+  //  COMMON-CONFIG page 62
   //  OUTPUT MODE
   //          VOUT                             IOUT
   //  0x00    not allowed                      not allowed
@@ -80,7 +92,7 @@ class DAC53001
   uint16_t getVersionID();
 
 
-  //  SETDAC
+  //  SETDAC page 62
   uint16_t setDAC(uint16_t value, uint8_t channel = 0);
 
 
@@ -93,6 +105,7 @@ class DAC53001
   //  DAC_X_MARGIN_HIGH       page 57
   //  DAC_X_MARGIN_LOW        page 57
   //  DAC-X-CMP-MODE-CONFIG   page 59
+  //  DAC-X-FUNC-CONFIG       page 60  (direct write / LATCH DAC / CLR / FUNCGEN )
   //  COMMON-TRIGGER          page 63  (reset?)
   //  COMMON-DAC-TRIG         page 64
   //  CMP-STATUS              page 66
@@ -103,7 +116,7 @@ class DAC53001
   //  SRAM-DATA               page 69
   //  BRDCAST-DATA            page 69
   //  PM bus commands not over I2C.
-
+  //
 
 
   //  ERROR HANDLING
@@ -151,10 +164,6 @@ class DAC63002 : public DAC53001
 public:
   DAC63002(const uint8_t address, TwoWire * wire = &Wire);
 };
-
-
-
-
 
 
 //  -- END OF FILE --

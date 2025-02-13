@@ -54,7 +54,7 @@ unittest(test_constructor)
 
   assertEqual(49,   dac1.getAddress());
   assertEqual(1023, dac1.getMaxValue());
-  assertEqual( 1,   dac1.getChannels());
+  assertEqual( 2,   dac1.getChannels());
 
   assertEqual(50,   dac2.getAddress());
   assertEqual(4095, dac2.getMaxValue());

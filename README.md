@@ -27,6 +27,14 @@ So use with care, feedback welcome.
 The DAC63001, DAC63002, DAC53001, and DAC53002 are a pin-compatible DACs.
 They are low power, support voltage- and current-output, see table below.
 
+|  device    |  bits  |  maxValue  |  channels  |  notes  |
+|:----------:|:------:|:----------:|:----------:|:--------|
+|  DAC53001  |   10   |    1023    |      1     |  base class
+|  DAC53002  |   10   |    1023    |      2     |
+|  DAC63001  |   12   |    4095    |      1     |
+|  DAC63002  |   12   |    4095    |      2     |
+
+
 
 
 
@@ -34,14 +42,6 @@ TODO elaborate
 
 
 
-
-
-|  device    |  bits  |  maxValue  |  channels  |  notes  |
-|:----------:|:------:|:----------:|:----------:|:--------|
-|  DAC53001  |   10   |    1023    |      1     |  base class
-|  DAC53002  |   10   |    1023    |      2     |
-|  DAC63001  |   12   |    4095    |      1     |
-|  DAC63002  |   12   |    4095    |      2     |
 
 
 ### Please report your experiences.
@@ -119,6 +119,32 @@ See datasheet page 58.
 |  0x04  |  Internal3  |   3x   |
 |  0x05  |  Internal4  |   4x   |
 
+
+### Current range
+
+See datasheet page 59.
+
+- **void setCurrentRange(uint8_t range, uint8_t channel = 0)**
+- **uint8_t getCurrentRange(uint8_t channel = 0)**
+
+|  value  |  from      |    to     |  notes  |
+|:-------:|:----------:|:---------:|:--------|
+|    00   |    0 μA    |    25 μA  |  default
+|    01   |    0 μA    |    50 μA  |
+|    02   |    0 μA    |   125 μA  |
+|    03   |    0 μA    |   250 μA  |
+|         |            |           |
+|    04   |    0 μA    |   ‒24 μA  |
+|    05   |    0 μA    |   ‒48 μA  |
+|    06   |    0 μA    |  ‒120 μA  |
+|    07   |    0 μA    |  ‒240 μA  |
+|         |            |           |
+|    08   |   ‒25 μA   |   +25 μA  |
+|    09   |   ‒50 μA   |   +50 μA  |
+|    10   |  ‒125 μA   |  +125 μA  |
+|    11   |  ‒250 μA   |  +250 μA  |
+
+Note: three scales, in steps 1, 2, 5, 10.
 
 ### Output mode
 
