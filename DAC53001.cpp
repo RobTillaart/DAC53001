@@ -171,13 +171,14 @@ uint16_t DAC53001::setDAC(uint16_t value, uint8_t channel)
   if (channel >= _channels) return 0;
   uint8_t reg = DAC53001_DAC_0_DATA;
   if (channel == 1) reg = DAC53001_DAC_1_DATA;
-  // TODO adjust value bits??
-  return _write16(reg, value);
+  return _write16(reg, value << 4);  //  bit 4-15
 }
 
 uint16_t DAC53001::lastError()
 {
-  return _error;
+  uint16_t e = _error;
+  _error = DAC53001_OK;
+  return e;
 }
 
 

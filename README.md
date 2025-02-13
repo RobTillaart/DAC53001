@@ -25,20 +25,23 @@ Function names / API still can change.
 So use with care, feedback welcome.
 
 The DAC63001, DAC63002, DAC53001, and DAC53002 are a pin-compatible DACs.
-They are low power, support voltage- and current-output.
+They are low power, support voltage- and current-output, see table below.
+
+
 
 
 TODO elaborate
 
 
-Possible derived classes, to investigate
+
+
 
 |  device    |  bits  |  maxValue  |  channels  |  notes  |
 |:----------:|:------:|:----------:|:----------:|:--------|
-|  DAC53001  |   10   |    1023    |      1     |
-|  DAC53002  |   10   |    1023    |      2     |  TODO derived class
-|  DAC63001  |   12   |    4095    |      1     |  TODO derived class
-|  DAC63002  |   12   |    4095    |      2     |  TODO derived class
+|  DAC53001  |   10   |    1023    |      1     |  base class
+|  DAC53002  |   10   |    1023    |      2     |
+|  DAC63001  |   12   |    4095    |      1     |
+|  DAC63002  |   12   |    4095    |      2     |
 
 
 ### Please report your experiences.
@@ -93,6 +96,9 @@ too if they are behind the multiplexer.
 ### Constructor
 
 - **DAC53001(uint8_t address, TwoWire \* wire = &Wire)** set address and I2C bus.
+- **DAC53002(uint8_t address, TwoWire \* wire = &Wire)** set address and I2C bus.
+- **DAC63001(uint8_t address, TwoWire \* wire = &Wire)** set address and I2C bus.
+- **DAC63002(uint8_t address, TwoWire \* wire = &Wire)** set address and I2C bus.
 - **bool begin()** checks if address can be found on the I2C bus.
 - **bool isConnected()** checks if address can be found on the I2C bus.
 - **uint8_t getAddress()** returns address set.
@@ -101,6 +107,8 @@ too if they are behind the multiplexer.
 
 
 ### Voltage reference
+
+See datasheet page 58.
 
 - **void setReference(DACX300X_reference mode, uint8_t channel = 0)**
 
@@ -115,6 +123,8 @@ too if they are behind the multiplexer.
 
 
 ### Output mode
+
+See datasheet page 62.
 
 - **void setOutputMode(uint8_t mode, uint8_t channel = 0);
 - **uint8_t getOutputMode(uint8_t channel = 0);
@@ -133,17 +143,25 @@ too if they are behind the multiplexer.
 
 ### setDAC
 
+See datasheet page 62.
+
 - **uint16_t setDAC(uint16_t value, uint8_t channel = 0)** 
 
 
 ### General status
 
+See datasheet page 65.
+
 - **uint16_t getStatus()** returns bit mask.
 
-See page 65
+To elaborate meaning bits in table.
 
-To elaborate meaning bits.
 
+### Error handling
+
+- **uint16_t lastError()** returns last error and resets to OK.
+
+To add table of error codes.
 
 
 
