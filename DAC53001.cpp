@@ -2,7 +2,7 @@
 //    FILE: DAC53001.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 2025-02-12
-// VERSION: 0.1.1
+// VERSION: 0.2.0
 // PURPOSE: Arduino library for I2C DAC53001 10 bit DAC.
 //     URL: https://github.com/RobTillaart/DAC53001
 //
@@ -98,28 +98,28 @@ void DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
   if (channel >= _channels) return;
   if (mode > 0x05) return;
 
-  //  COMMON-CONFIG page 62 for internal ref bit 12
+  //  COMMON-CONFIG page 62 for internal reference bit 12
   uint8_t reg = DAC53001_COMMON_CONFIG;
   uint16_t mask = _read16(reg);
-  mask &= 0xEFFF;    //  disable internal reference
+  mask &= ~0x1000;   //  disable EN-INT-REF
   if (mode > 1)
   {
-    mask |= 0x1000;  //   enable internal reference
+    mask |= 0x1000;  //   enable EN-INT-REF
   }
   _write16(reg, mask);
 
   reg = DAC53001_DAC_0_VOUT_CMP_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_VOUT_CMP_CONFIG;
   mask = _read16(reg);
-  mask &= 0xE3FF;        //  clear bits
-  mask |= (mode << 10);  //  set mode
+  mask &= ~(0x0007 << 10);  //  clear VOUT-GAIN-X bits 10-12
+  mask |= (mode << 10);     //  set mode
   _write16(reg, mask);
 }
 
 uint8_t DAC53001::getReference(uint8_t channel)
 {
   if (channel >= _channels) return 0;
-  //  COMMON-CONFIG page 62 for internal ref bit 12
+  //  COMMON-CONFIG page 62 for internal reference bit 12
   uint8_t reg = DAC53001_DAC_0_VOUT_CMP_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_VOUT_CMP_CONFIG;
   uint16_t mode = _read16(reg);
@@ -161,16 +161,17 @@ void DAC53001::setOutputMode(uint8_t mode, uint8_t channel)
 {
   if (channel >= _channels) return;
   if ((mode == 0x00) || (mode > 0x07)) return;
+  //  COMMON-CONFIG page 62 for IOUT-PDN-X, VOUT-PDN-X, bit 9-11, 0-2
   uint8_t reg = DAC53001_COMMON_CONFIG;
   uint16_t mask = _read16(reg);
   if (channel == 0)
   {
-    mask |= 0x0E00;  //  disable output DAC0
+    mask &= ~(0x0007 << 9);  //  clear bits 9-11 for DAC0 output mode
     mask |= (mode << 9);
   }
   if (channel == 1)
   {
-    mask |= 0x0007;  //  disable output DAC1
+    mask &= ~0x0007;  //  clear bits 0-2 for DAC1 output mode
     mask |= (mode);
   }
   _write16(reg, mask);
@@ -184,7 +185,7 @@ uint8_t DAC53001::getOutputMode(uint8_t channel)
   uint8_t mode = 0;
   if (channel == 0)
   {
-    mode = (mask & 0x0E00) >> 9;
+    mode = (mask >> 9) & 0x0007;
   }
   if (channel == 1)
   {
@@ -206,14 +207,16 @@ uint16_t DAC53001::getStatus()
 uint16_t DAC53001::getDeviceID()
 {
   uint16_t deviceId = _read16(DAC53001_GENERAL_STATUS);
-  // translate 08 = 63002, 09 = 63001, 10 = 53002, 11 = 53001  ?
+  //  translate 08 = 63002, 09 = 63001, 10 = 53002, 11 = 53001  ?
+  //  uint16_t ids[4] = { 63002, 63001, 53002, 53001 };
+  //  return ids[(deviceId & 0x000F) >> 2];
   return (deviceId & 0x000F) >> 2;
 }
 
 uint16_t DAC53001::getVersionID()
 {
   uint16_t versionId = _read16(DAC53001_GENERAL_STATUS);
-  return versionId & 0x03;
+  return versionId & 0x0003;
 }
 
 

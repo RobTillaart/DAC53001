@@ -37,6 +37,13 @@ They are low power, support voltage- and current-output, see table below.
 
 TODO elaborate
 
+Feedback as always is welcome.
+
+### Breaking change 0.2.0
+
+In 0.2.0 a bug in **setOutputMode()** is fixed with the mode bit, See issue #4.
+Versions before 0.2.0 are obsolete now.
+
 
 ### Please report your experiences.
 
