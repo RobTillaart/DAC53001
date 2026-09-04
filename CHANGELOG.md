@@ -8,7 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.0] - 2026-09-03
 - fix #4, fix output mode, kudos to michalcourson
-- refactor some bit masking code, reduce "magic numbers"
+- refactor bit masking code, reduce "magic numbers"
+- add error handling, CHANNEL_ERROR + PARAMETER_ERROR
+- change return type
+  - setReference() returns bool.
+  - setCurrentRange() returns bool.
+  - setOutputMode() returns bool.
+- add bool isBusy(channel)
+- update readme.md.
 - minor edits
 
 ----

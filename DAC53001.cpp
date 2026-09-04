@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////
 //
 //  I2C REGISTERS - datasheet Page 55-69
-//  note missing register addresses
+//  note missing register addresses  (room for 4 channel devices)
 
 const uint8_t DAC53001_NOP                    = 0x00;
 const uint8_t DAC53001_DAC_1_MARGIN_HIGH      = 0x01;
@@ -93,10 +93,19 @@ uint8_t DAC53001::getChannels()
 //
 //  VOLTAGE REFERENCE
 //
-void DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
+bool DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
 {
-  if (channel >= _channels) return;
-  if (mode > 0x05) return;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return false;
+  }
+  if (mode > 0x05)
+  {
+    _error = DAC53001_PARAM_ERROR;
+    return false;
+  }
 
   //  COMMON-CONFIG page 62 for internal reference bit 12
   uint8_t reg = DAC53001_COMMON_CONFIG;
@@ -114,11 +123,17 @@ void DAC53001::setReference(DACX300X_reference mode, uint8_t channel)
   mask &= ~(0x0007 << 10);  //  clear VOUT-GAIN-X bits 10-12
   mask |= (mode << 10);     //  set mode
   _write16(reg, mask);
+  return true;
 }
 
 uint8_t DAC53001::getReference(uint8_t channel)
 {
-  if (channel >= _channels) return 0;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return 0;
+  }
   //  COMMON-CONFIG page 62 for internal reference bit 12
   uint8_t reg = DAC53001_DAC_0_VOUT_CMP_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_VOUT_CMP_CONFIG;
@@ -133,19 +148,34 @@ uint8_t DAC53001::getReference(uint8_t channel)
 //
 //  CURRENT RANGE
 //
-void DAC53001::setCurrentRange(uint8_t range, uint8_t channel)
+bool DAC53001::setCurrentRange(uint8_t range, uint8_t channel)
 {
-  if (channel >= _channels) return;
-  if (range > 0x0B) return;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return false;
+  }
+  if (range > 0x0B)
+  {
+    _error = DAC53001_PARAM_ERROR;
+    return false;
+  }
   uint8_t reg = DAC53001_DAC_0_IOUT_MISC_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_IOUT_MISC_CONFIG;
   uint16_t mask = range << 9;
   _write16(reg, mask);
+  return true;
 }
 
 uint8_t DAC53001::getCurrentRange(uint8_t channel)
 {
-  if (channel >= _channels) return 0;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return 0;
+  }
   uint8_t reg = DAC53001_DAC_0_IOUT_MISC_CONFIG;
   if (channel == 1) reg = DAC53001_DAC_1_IOUT_MISC_CONFIG;
   uint16_t mask = _read16(reg);
@@ -157,10 +187,19 @@ uint8_t DAC53001::getCurrentRange(uint8_t channel)
 //
 //  OUTPUT MODE
 //
-void DAC53001::setOutputMode(uint8_t mode, uint8_t channel)
+bool DAC53001::setOutputMode(uint8_t mode, uint8_t channel)
 {
-  if (channel >= _channels) return;
-  if ((mode == 0x00) || (mode > 0x07)) return;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return false;
+  }
+  if ((mode == 0x00) || (mode > 0x07))
+  {
+    _error = DAC53001_PARAM_ERROR;
+    return false;
+  }
   //  COMMON-CONFIG page 62 for IOUT-PDN-X, VOUT-PDN-X, bit 9-11, 0-2
   uint8_t reg = DAC53001_COMMON_CONFIG;
   uint16_t mask = _read16(reg);
@@ -175,11 +214,17 @@ void DAC53001::setOutputMode(uint8_t mode, uint8_t channel)
     mask |= (mode);
   }
   _write16(reg, mask);
+  return true;
 }
 
 uint8_t DAC53001::getOutputMode(uint8_t channel)
 {
-  if (channel >= _channels) return 0;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return 0;
+  }
   uint8_t reg = DAC53001_COMMON_CONFIG;
   uint16_t mask = _read16(reg);
   uint8_t mode = 0;
@@ -209,8 +254,8 @@ uint16_t DAC53001::getDeviceID()
   uint16_t deviceId = _read16(DAC53001_GENERAL_STATUS);
   //  translate 08 = 63002, 09 = 63001, 10 = 53002, 11 = 53001  ?
   //  uint16_t ids[4] = { 63002, 63001, 53002, 53001 };
-  //  return ids[(deviceId & 0x000F) >> 2];
-  return (deviceId & 0x000F) >> 2;
+  //  return ids[((deviceId & 0x00FF) >> 2) - 8];  something
+  return (deviceId & 0x00FF) >> 2;
 }
 
 uint16_t DAC53001::getVersionID()
@@ -226,7 +271,12 @@ uint16_t DAC53001::getVersionID()
 //
 uint16_t DAC53001::setDAC(uint16_t value, uint8_t channel)
 {
-  if (channel >= _channels) return 0;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return 0;
+  }
   uint8_t reg = DAC53001_DAC_0_DATA;
   if (channel == 1) reg = DAC53001_DAC_1_DATA;
   return _write16(reg, value << 4);  //  bit 4-15
@@ -234,12 +284,35 @@ uint16_t DAC53001::setDAC(uint16_t value, uint8_t channel)
 
 uint16_t DAC53001::getDAC(uint8_t channel)
 {
-  if (channel >= _channels) return 0;
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return 0;
+  }
   uint8_t reg = DAC53001_DAC_0_DATA;
   if (channel == 1) reg = DAC53001_DAC_1_DATA;
   return _read16(reg) >> 4;  //  bit 4-15
 }
 
+bool DAC53001::isBusy(uint8_t channel)
+{
+  _error = DAC53001_OK;
+  if (channel >= _channels)
+  {
+    _error = DAC53001_CHANNEL_ERROR;
+    return false;
+  }
+  uint16_t status = _read16(DAC53001_GENERAL_STATUS);
+  if (channel == 0) return (status & (1 << 12)) != 0;
+  return (status & (1 << 9)) != 0;
+}
+
+
+////////////////////////////////////////////////////////
+//
+//  ERROR HANDLING
+//
 uint16_t DAC53001::lastError()
 {
   uint16_t e = _error;
@@ -298,7 +371,6 @@ uint16_t DAC53001::_write16(uint8_t reg, uint16_t value)
 //
 //  DERIVED CLASSES
 //
-//  TODO - DAC53002 - DAC63001 - DAC63002 ??
 DAC53002::DAC53002(const uint8_t address, TwoWire * wire)
         : DAC53001(address, wire)
 {

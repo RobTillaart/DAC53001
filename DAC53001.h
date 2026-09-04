@@ -19,6 +19,7 @@
 #define DAC53001_OK                  0x00
 #define DAC53001_PARAM_ERROR         0x81
 #define DAC53001_I2C_ERROR           0x82
+#define DAC53001_CHANNEL_ERROR       0x83
 
 
 enum DACX300X_reference
@@ -47,7 +48,7 @@ class DAC53001
 
   //  DAC-X-VOUT-CMP-CONFIG  page 58
   //  VOLTAGE REFERENCE
-  void      setReference(DACX300X_reference mode, uint8_t channel = 0);
+  bool      setReference(DACX300X_reference mode, uint8_t channel = 0);
   uint8_t   getReference(uint8_t channel = 0);
 
 
@@ -67,7 +68,7 @@ class DAC53001
   //  09    ‒50 μA  to  +50 μA
   //  10   ‒125 μA  to +125 μA
   //  11   ‒250 μA  to +250 μA
-  void      setCurrentRange(uint8_t range, uint8_t channel = 0);
+  bool      setCurrentRange(uint8_t range, uint8_t channel = 0);
   uint8_t   getCurrentRange(uint8_t channel = 0);
 
 
@@ -83,7 +84,7 @@ class DAC53001
   //  0x06    PowerDown + Hi-Z to AGND         power up
   //  0x07    PowerDown + Hi-Z to AGND         power down
   //
-  void      setOutputMode(uint8_t mode, uint8_t channel = 0);
+  bool      setOutputMode(uint8_t mode, uint8_t channel = 0);
   uint8_t   getOutputMode(uint8_t channel = 0);
 
 
@@ -96,6 +97,7 @@ class DAC53001
   //  SETDAC page 62
   uint16_t setDAC(uint16_t value, uint8_t channel = 0);
   uint16_t getDAC(uint8_t channel = 0);
+  bool     isBusy(uint8_t channel = 0);
 
 
   ////////////////////////////////////////////////////////
